@@ -1,0 +1,18 @@
+# Python virtualenv
+venv/
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+
+# Docker
+*.log
+
+# Kubernetes
+*.yaml
+
+# Misc
+.DS_Store
+
