@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/component: notifications
+
+data:
+  service.slack: |
+    token: $SLACK_TOKEN
+  trigger.on-sync-status: |
+    - when: app.status.operationState.phase in ['Succeeded','Failed']
+      send: [slack]
+  template.sync-status: |
+    message: Application {{.app.metadata.name}} sync {{.app.status.operationState.phase}}

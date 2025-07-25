@@ -71,3 +71,13 @@ Run the integration test (requires `kind`, `kubectl` and `helm` in your PATH):
 ```bash
 ./tests/test_k8s_integration.sh
 ```
+
+## ArgoCD Deployment
+
+Manifests for ArgoCD are available under `k8s/argocd`. The base configuration
+creates an `Application` that syncs this repository's Helm chart. Environment
+overlays for `dev`, `staging` and `prod` adjust the target namespace and Git
+branch. The sync policy enables automatic deployment, pruning and self-healing.
+
+See [docs/argocd.md](docs/argocd.md) for detailed setup instructions, including
+notification configuration and how to test automated sync and rollback.
