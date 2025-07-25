@@ -9,9 +9,11 @@ __pycache__/
 
 # Docker
 *.log
+helm/charts/
 
 # Kubernetes
 *.yaml
+!helm/*.yaml
 
 # Misc
 .DS_Store

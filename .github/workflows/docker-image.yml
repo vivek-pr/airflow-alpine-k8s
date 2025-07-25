@@ -22,6 +22,7 @@ jobs:
           load: true
           tags: airflow-alpine-k8s:latest
           context: .
+          file: docker/Dockerfile
       - name: Run local tests
         run: |
           ./tests/test_packages.sh

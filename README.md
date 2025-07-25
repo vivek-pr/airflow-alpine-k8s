@@ -21,13 +21,14 @@ docker build -t airflow-alpine -f docker/Dockerfile .
 
 ## Helm Chart
 
-The official Airflow Helm chart is included under `helm/airflow`. A custom
-`values-alpine.yaml` file configures image references and resource limits
-for the Alpine build. Render the chart with:
+The repo provides a wrapper chart in `helm/Chart.yaml` which pulls in the
+official Airflow Helm chart as a dependency. A custom `helm/values-alpine.yaml`
+overrides the image reference and resource limits for the Alpine image. Render
+the manifests with:
 
 ```bash
-helm dependency update helm/airflow
-helm template airflow helm/airflow -f helm/airflow/values-alpine.yaml
+helm dependency update helm
+helm template airflow helm -f helm/values-alpine.yaml
 ```
 
 ## CI/CD
