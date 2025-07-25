@@ -45,18 +45,26 @@ Enable branch protection for `main` to require passing status checks and pull re
 
 ## Testing
 
-Basic validation scripts are available under `tests/`:
+Test scripts are available under `tests/`:
 
 - `test_hadolint.sh` – lint the Dockerfile with [hadolint](https://github.com/hadolint/hadolint)
 - `test_trivy.sh` – scan the Dockerfile for vulnerabilities using [Trivy](https://github.com/aquasecurity/trivy)
 - `test_packages.sh` – verify required Alpine packages are listed in the Dockerfile
+- `test_docker_build.sh` – build the Docker image and ensure Airflow starts
+- `test_k8s_integration.sh` – deploy the Helm chart on KIND and validate the cluster
+- `test_end_to_end.sh` – trigger an example DAG inside the KIND cluster
+- `test_performance.sh` – compare startup time of the Alpine image with the official image
+- `test_load.sh` – run a basic load test against the Airflow webserver
+- `test_disaster_recovery.sh` – verify pods recover if deleted
+- `test_security_compliance.sh` – check manifests with `kube-score`
 
-Run all tests with:
+Run the basic checks with:
 
 ```bash
 ./tests/test_hadolint.sh
 ./tests/test_trivy.sh
 ./tests/test_packages.sh
+./tests/test_docker_build.sh
 ```
 
 ## Kubernetes Integration Testing
@@ -70,6 +78,18 @@ Run the integration test (requires `kind`, `kubectl` and `helm` in your PATH):
 
 ```bash
 ./tests/test_k8s_integration.sh
+```
+
+### Additional Test Suites
+
+Other scripts provide broader test coverage:
+
+```bash
+./tests/test_end_to_end.sh        # run a DAG in a temporary cluster
+./tests/test_performance.sh       # compare image startup times
+./tests/test_load.sh              # apply load to the webserver
+./tests/test_disaster_recovery.sh # simulate pod failures
+./tests/test_security_compliance.sh # score manifests with kube-score
 ```
 
 ## ArgoCD Deployment
