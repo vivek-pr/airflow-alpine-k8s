@@ -59,6 +59,14 @@ Run all tests with:
 ./tests/test_packages.sh
 ```
 
+Additional testing scripts provide broader coverage:
+- `test_docker_build.sh` – build the Dockerfile to ensure it compiles successfully
+- `test_e2e_workflow.sh` – deploy a temporary cluster and run an example DAG
+- `test_performance.sh` – compare startup time of the Alpine image to the official image
+- `test_load.sh` – run a simple load scenario against the scheduler
+- `test_disaster_recovery.sh` – back up and restore the Airflow database
+- `test_security_compliance.sh` – aggregate security checks
+
 ## Kubernetes Integration Testing
 
 An optional script `tests/test_k8s_integration.sh` provisions a temporary
