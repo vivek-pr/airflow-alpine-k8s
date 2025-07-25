@@ -38,7 +38,7 @@ env:
   - name: AIRFLOW__CORE__LOAD_EXAMPLES
     value: 'False'
   - name: AIRFLOW__CORE__EXECUTOR
-    value: LocalExecutor
+    value: CeleryExecutor
 
 webserverLivenessProbe:
   enabled: true
