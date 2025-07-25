@@ -10,6 +10,15 @@ Custom Apache Airflow deployment with Alpine-based Docker images for Kubernetes 
 - **docs/** – Project documentation
 - **tests/** – Test cases and utilities
 
+## Docker Image
+
+The `docker/Dockerfile` builds a lightweight Airflow image based on
+Alpine Linux 3.19. Build it locally with:
+
+```bash
+docker build -t airflow-alpine -f docker/Dockerfile .
+```
+
 ## CI/CD
 
 A GitHub Actions workflow builds and pushes a Docker image on every push or pull request to the `main` branch. Docker registry credentials are provided via repository secrets:
