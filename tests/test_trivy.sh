@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+if ! command -v trivy >/dev/null 2>&1; then
+    echo "trivy command not found" >&2
+    exit 1
+fi
+
 trivy config --exit-code 1 --quiet docker/Dockerfile
 docker build -t airflow-alpine-k8s:test -f docker/Dockerfile .
 trivy image --exit-code 1 --quiet airflow-alpine-k8s:test

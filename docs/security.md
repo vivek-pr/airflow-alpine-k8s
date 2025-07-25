@@ -5,6 +5,20 @@ Running Airflow in production requires attention to a few security aspects.
 ## Image Scanning
 Run `tests/test_trivy.sh` regularly to scan the Docker image for vulnerabilities. Keep the base image and packages up to date.
 
+### Required Tools
+
+The security test suite expects `trivy`, `cosign` and `kube-score` to be installed. On Debian-based systems these can be installed with:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y trivy
+curl -L -o cosign "https://github.com/sigstore/cosign/releases/download/v2.2.3/cosign-linux-amd64"
+sudo install -m 0755 cosign /usr/local/bin/cosign
+curl -L -o kube-score.tar.gz "https://github.com/zegl/kube-score/releases/download/v1.17.0/kube-score_1.17.0_linux_amd64.tar.gz"
+tar -xzf kube-score.tar.gz
+sudo install -m 0755 kube-score /usr/local/bin/kube-score
+```
+
 ## Secrets Management
 Store connection credentials and other secrets in Kubernetes Secrets or a secret management tool such as HashiCorp Vault. Avoid committing sensitive data to Git.
 
