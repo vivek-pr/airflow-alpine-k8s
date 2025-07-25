@@ -16,3 +16,10 @@ __pycache__/
 # Misc
 .DS_Store
 
+# Helm
+helm/airflow/docs/
+helm/airflow/values.schema.json
+helm/airflow/values.yaml
+helm/airflow/charts/postgresql/
+helm/airflow/charts/postgresql-*.tgz
+

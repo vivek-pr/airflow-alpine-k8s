@@ -19,6 +19,16 @@ Alpine Linux 3.19. Build it locally with:
 docker build -t airflow-alpine -f docker/Dockerfile .
 ```
 
+## Helm Chart
+
+The `helm/airflow` chart depends on Bitnami subcharts. Only `Chart.yaml` and the
+optional `Chart.lock` are kept in version control. Run the following command to
+download dependencies before deploying:
+
+```bash
+helm dependency build helm/airflow
+```
+
 ## CI/CD
 
 A GitHub Actions workflow builds and pushes a Docker image on every push or pull request to the `main` branch. Docker registry credentials are provided via repository secrets:
