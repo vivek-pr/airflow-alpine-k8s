@@ -67,6 +67,7 @@ Test scripts in the `tests/` directory cover linting, vulnerability scanning and
 ./tests/test_packages.sh
 ./tests/test_docker_build.sh
 ```
+The security-related tests expect `hadolint`, `trivy`, `cosign` and `kube-score` to be installed.
 Additional suites for end-to-end and performance testing are also available.
 
 ## Documentation
@@ -75,6 +76,8 @@ Additional suites for end-to-end and performance testing are also available.
 - [ArgoCD Tutorial](docs/argocd.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Security Considerations](docs/security.md)
+- [Disaster Recovery](docs/disaster-recovery.md)
+- [Performance Tuning](docs/performance.md)
 - [Architecture](docs/architecture.md)
 - [Monitoring Stack](docs/observability.md)
 
