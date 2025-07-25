@@ -15,6 +15,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg lsb-release tar curl
+          # hadolint
+          curl -L -o hadolint "https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64"
+          chmod +x hadolint
+          sudo mv hadolint /usr/local/bin/
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
           echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/trivy.list
           sudo apt-get update
@@ -41,6 +45,7 @@ jobs:
           file: docker/Dockerfile
       - name: Run local tests
         run: |
+          ./tests/test_hadolint.sh
           ./tests/test_packages.sh
           ./tests/test_trivy.sh
           ./tests/test_image_signing.sh
