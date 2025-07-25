@@ -8,6 +8,11 @@ if ! command -v cosign >/dev/null 2>&1; then
     exit 1
 fi
 
+if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
+    echo "docker not available, skipping image signing test" >&2
+    exit 0
+fi
+
 docker build -t "$IMAGE" -f docker/Dockerfile .
 cosign generate-key-pair --yes --output-key cosign.key --output-pub cosign.pub
 COSIGN_PASSWORD="" cosign sign --key cosign.key "$IMAGE"
