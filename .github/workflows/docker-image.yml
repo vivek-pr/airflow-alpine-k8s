@@ -25,6 +25,8 @@ jobs:
           file: docker/Dockerfile
       - name: Run local tests
         run: |
+          ./tests/test_docker_build.sh
+          ./tests/test_security_compliance.sh
           ./tests/test_packages.sh
       - name: Verify container
         run: docker run --rm airflow-alpine-k8s:latest airflow version
