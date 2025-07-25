@@ -12,7 +12,8 @@ ENV PIP_NO_CACHE_DIR=1
 # Install build dependencies
 # hadolint ignore=DL3018,DL3013
 RUN apk add --no-cache --virtual .build-deps \
-        gcc musl-dev libc-dev libffi-dev openssl-dev cargo make postgresql-dev \
+        gcc g++ musl-dev libc-dev libffi-dev openssl-dev cargo make postgresql-dev \
+        py3-pybind11-dev re2-dev \
     && pip install --upgrade pip \
     && pip install "apache-airflow==${AIRFLOW_VERSION}" \
          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
@@ -26,7 +27,7 @@ ENV AIRFLOW_HOME=/opt/airflow \
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
-RUN apk add --no-cache bash postgresql-client redis su-exec \
+RUN apk add --no-cache bash postgresql-client redis su-exec re2 \
     && addgroup -S airflow && adduser -S -G airflow airflow \
     && mkdir -p ${AIRFLOW_HOME} \
     && chown airflow:airflow ${AIRFLOW_HOME}
