@@ -1,0 +1,51 @@
+images:
+  useDefaultImageForMigration: false
+  airflow:
+    repository: airflow-alpine-k8s
+    tag: latest
+    pullPolicy: IfNotPresent
+    pullSecrets:
+      - regcred
+
+webserver:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+scheduler:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+workers:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+env:
+  - name: AIRFLOW__CORE__LOAD_EXAMPLES
+    value: 'False'
+  - name: AIRFLOW__CORE__EXECUTOR
+    value: LocalExecutor
+
+webserverLivenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  timeoutSeconds: 20
+
+webserverReadinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  timeoutSeconds: 20

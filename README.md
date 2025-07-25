@@ -19,15 +19,25 @@ Alpine Linux 3.19. Build it locally with:
 docker build -t airflow-alpine -f docker/Dockerfile .
 ```
 
+## Helm Chart
+
+The repo provides a wrapper chart in `helm/Chart.yaml` which pulls in the
+official Airflow Helm chart as a dependency. A custom `helm/values-alpine.yaml`
+overrides the image reference and resource limits for the Alpine image. Render
+the manifests with:
+
+```bash
+helm dependency update helm
+helm template airflow helm -f helm/values-alpine.yaml
+```
+
 ## CI/CD
 
-A GitHub Actions workflow builds and pushes a Docker image on every push or pull request to the `main` branch. Docker registry credentials are provided via repository secrets:
-
-- `DOCKER_REGISTRY`
-- `REGISTRY_USERNAME`
-- `REGISTRY_PASSWORD`
-
-Configure these secrets in your repository settings. The workflow file is located at `.github/workflows/docker-image.yml`.
+A GitHub Actions workflow builds the Docker image and runs local validation tests
+on every push or pull request to the `main` branch. The workflow no longer
+pushes images to a registry. Instead, it ensures that the Dockerfile builds and
+that the container starts successfully. The workflow file is located at
+`.github/workflows/docker-image.yml`.
 
 ## Branch Protection
 
