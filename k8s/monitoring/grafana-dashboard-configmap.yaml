@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+    app: grafana
+data:
+  airflow-dashboard.json: |
+    {
+      "annotations": {
+        "list": []
+      },
+      "panels": [],
+      "schemaVersion": 38,
+      "title": "Airflow Overview",
+      "version": 1
+    }
