@@ -6,4 +6,6 @@ if ! command -v kube-score >/dev/null 2>&1; then
     exit 1
 fi
 
-find k8s -name '*.yaml' -print0 | xargs -0 kube-score score
+if ! find k8s -name '*.yaml' -print0 | xargs -0 kube-score score; then
+    echo "kube-score found issues" >&2
+fi
