@@ -1,0 +1,9 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow-prod
+spec:
+  source:
+    targetRevision: main
+  destination:
+    namespace: airflow-prod
