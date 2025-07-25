@@ -27,7 +27,7 @@ ENV AIRFLOW_HOME=/opt/airflow \
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
-RUN apk add --no-cache bash postgresql-client redis su-exec \
+RUN apk add --no-cache bash postgresql-client redis su-exec re2 \
     && addgroup -S airflow && adduser -S -G airflow airflow \
     && mkdir -p ${AIRFLOW_HOME} \
     && chown airflow:airflow ${AIRFLOW_HOME}
