@@ -16,3 +16,12 @@ The example manifests use minimal RBAC permissions. Review the roles and tighten
 
 ## Updates
 Monitor Airflow and dependency release notes for security patches. Rebuild and redeploy the image when vulnerabilities are fixed.
+
+## Automated Updates
+The repository uses Dependabot to monitor the Dockerfile and GitHub Actions for security patches. Pull requests are created automatically when new versions are available.
+
+## Image Signing
+Images built by the CI pipeline are signed with [cosign](https://github.com/sigstore/cosign). The signature can be verified using the public key stored in the repository.
+
+## Compliance Checks
+Run `tests/test_security_compliance.sh` to perform a kube-score audit of all Kubernetes manifests. This should be executed before any production deployment.
