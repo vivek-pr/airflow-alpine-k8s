@@ -58,3 +58,16 @@ Run all tests with:
 ./tests/test_trivy.sh
 ./tests/test_packages.sh
 ```
+
+## Kubernetes Integration Testing
+
+An optional script `tests/test_k8s_integration.sh` provisions a temporary
+[KIND](https://kind.sigs.k8s.io/) cluster and deploys the Helm chart. It
+verifies that the webserver, scheduler and worker pods start, checks database
+migrations, confirms Redis/Celery connectivity and ensures DAGs load correctly.
+
+Run the integration test (requires `kind`, `kubectl` and `helm` in your PATH):
+
+```bash
+./tests/test_k8s_integration.sh
+```
