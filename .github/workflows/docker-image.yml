@@ -11,6 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install security tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg lsb-release tar curl
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+          COSIGN_VERSION="v2.2.3"
+          curl -L -o cosign "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64"
+          chmod +x cosign
+          sudo mv cosign /usr/local/bin/
+          KUBESCORE_VERSION="1.17.0"
+          curl -L -o kube-score.tar.gz "https://github.com/zegl/kube-score/releases/download/v${KUBESCORE_VERSION}/kube-score_${KUBESCORE_VERSION}_linux_amd64.tar.gz"
+          tar -xzf kube-score.tar.gz
+          sudo mv kube-score /usr/local/bin/
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx

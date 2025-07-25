@@ -67,6 +67,7 @@ Test scripts in the `tests/` directory cover linting, vulnerability scanning and
 ./tests/test_packages.sh
 ./tests/test_docker_build.sh
 ```
+The security-related tests expect `trivy`, `cosign` and `kube-score` to be installed.
 Additional suites for end-to-end and performance testing are also available.
 
 ## Documentation
