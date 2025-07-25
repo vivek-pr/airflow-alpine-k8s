@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: airflow-rules
+  namespace: monitoring
+spec:
+  groups:
+    - name: airflow.rules
+      rules:
+        - alert: AirflowSchedulerDown
+          expr: absent(up{job="airflow-scheduler"})
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Airflow scheduler has no running instances"
+            description: "No scheduler heartbeat metrics received in the last 5 minutes"

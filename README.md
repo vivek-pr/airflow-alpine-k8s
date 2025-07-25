@@ -12,6 +12,7 @@ A lightweight Apache Airflow distribution built on Alpine Linux and tailored for
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
+- [Monitoring](#monitoring)
 
 ## Repository Structure
 - **docker/** – Dockerfiles and helper scripts
@@ -54,6 +55,10 @@ flowchart TD
 ```
 More information can be found in [docs/architecture.md](docs/architecture.md).
 
+## Monitoring
+Sample manifests for Prometheus, Grafana and Loki reside in `k8s/monitoring`.
+See [docs/observability.md](docs/observability.md) for setup details.
+
 ## Testing
 Test scripts in the `tests/` directory cover linting, vulnerability scanning and Kubernetes integration. Run the basic checks with:
 ```bash
@@ -71,6 +76,7 @@ Additional suites for end-to-end and performance testing are also available.
 - [Troubleshooting](docs/troubleshooting.md)
 - [Security Considerations](docs/security.md)
 - [Architecture](docs/architecture.md)
+- [Monitoring Stack](docs/observability.md)
 
 ## Contributing
 Please read [docs/contributing.md](docs/contributing.md) if you wish to contribute patches or bug reports.

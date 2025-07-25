@@ -1,0 +1,6 @@
+resources:
+  - prometheus.yaml
+  - grafana.yaml
+  - grafana-dashboard-configmap.yaml
+  - loki.yaml
+  - prometheus-rules.yaml
