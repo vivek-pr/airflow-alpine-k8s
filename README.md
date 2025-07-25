@@ -1,2 +1,25 @@
 # airflow-alpine-k8s
-Custom Apache Airflow deployment with Alpine-based Docker images for Kubernetes using ArgoCD
+
+Custom Apache Airflow deployment with Alpine-based Docker images for Kubernetes using ArgoCD.
+
+## Repository Structure
+
+- **docker/** – Dockerfiles and related scripts
+- **helm/** – Helm charts
+- **k8s/** – Kubernetes manifests
+- **docs/** – Project documentation
+- **tests/** – Test cases and utilities
+
+## CI/CD
+
+A GitHub Actions workflow builds and pushes a Docker image on every push or pull request to the `main` branch. Docker registry credentials are provided via repository secrets:
+
+- `DOCKER_REGISTRY`
+- `REGISTRY_USERNAME`
+- `REGISTRY_PASSWORD`
+
+Configure these secrets in your repository settings. The workflow file is located at `.github/workflows/docker-image.yml`.
+
+## Branch Protection
+
+Enable branch protection for `main` to require passing status checks and pull request reviews before merging.
