@@ -75,6 +75,8 @@ Additional suites for end-to-end and performance testing are also available.
 - [ArgoCD Tutorial](docs/argocd.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Security Considerations](docs/security.md)
+- [Disaster Recovery](docs/disaster-recovery.md)
+- [Performance Tuning](docs/performance.md)
 - [Architecture](docs/architecture.md)
 - [Monitoring Stack](docs/observability.md)
 
