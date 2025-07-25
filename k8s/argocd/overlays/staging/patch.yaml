@@ -1,0 +1,9 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow-staging
+spec:
+  source:
+    targetRevision: staging
+  destination:
+    namespace: airflow-staging
