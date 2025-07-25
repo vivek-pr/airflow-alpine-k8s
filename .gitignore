@@ -12,7 +12,15 @@ __pycache__/
 
 # Kubernetes
 *.yaml
+!helm/airflow/Chart.yaml
+!helm/airflow/Chart.lock
 
 # Misc
 .DS_Store
 
+# Helm chart dependencies
+helm/airflow/docs/
+helm/airflow/values.schema.json
+helm/airflow/values.yaml
+helm/airflow/charts/postgresql/
+helm/airflow/charts/postgresql-*.tgz

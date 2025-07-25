@@ -48,3 +48,11 @@ Run all tests with:
 ./tests/test_trivy.sh
 ./tests/test_packages.sh
 ```
+
+## Helm Chart
+
+The chart in `helm/airflow` only contains `Chart.yaml` and `Chart.lock`. Run the following to download dependencies from the Bitnami repository:
+
+```bash
+helm dependency build helm/airflow
+```
