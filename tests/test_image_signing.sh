@@ -14,6 +14,8 @@ if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
 fi
 
 docker build -t "$IMAGE" -f docker/Dockerfile .
-cosign generate-key-pair --yes --output-key cosign.key --output-pub cosign.pub
+# Generate keys non-interactively; cosign writes cosign.key and cosign.pub
+COSIGN_PASSWORD="" cosign generate-key-pair --output-key-prefix cosign
 COSIGN_PASSWORD="" cosign sign --key cosign.key "$IMAGE"
 COSIGN_PASSWORD="" cosign verify --key cosign.pub "$IMAGE"
+
