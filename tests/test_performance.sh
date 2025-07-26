@@ -8,7 +8,7 @@ fi
 
 # Build official image for comparison
 cat <<'DOCKERFILE' > /tmp/Dockerfile_official
-FROM apache/airflow:2.8.1
+FROM apache/airflow:3.0.3
 DOCKERFILE
 
 docker build -t airflow-official:compare -f /tmp/Dockerfile_official /tmp
