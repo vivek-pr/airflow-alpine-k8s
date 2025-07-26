@@ -14,8 +14,12 @@ if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
 fi
 
 docker build -t "$IMAGE" -f docker/Dockerfile .
+
 # Generate keys non-interactively; cosign writes cosign.key and cosign.pub
 COSIGN_PASSWORD="" cosign generate-key-pair --output-key-prefix cosign
-COSIGN_PASSWORD="" cosign sign --key cosign.key "$IMAGE"
-COSIGN_PASSWORD="" cosign verify --key cosign.pub "$IMAGE"
+
+# Save the image as a tarball and sign it locally to avoid registry access
+docker save "$IMAGE" -o image.tar
+COSIGN_PASSWORD="" cosign sign-blob --key cosign.key --output image.tar.sig image.tar
+COSIGN_PASSWORD="" cosign verify-blob --key cosign.pub --signature image.tar.sig image.tar
 
