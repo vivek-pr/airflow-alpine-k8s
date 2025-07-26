@@ -17,6 +17,10 @@ RUN apk add --no-cache --virtual .build-deps \
     && pip install --upgrade pip \
     && pip install "apache-airflow==${AIRFLOW_VERSION}" \
          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
+    && pip install --no-cache-dir --upgrade \
+         "Werkzeug>=3.0.6" \
+         "cryptography>=44.0.1" \
+         "starlette>=0.47.2" \
     && apk del .build-deps
 
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
