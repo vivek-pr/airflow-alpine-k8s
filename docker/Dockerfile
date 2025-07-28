@@ -4,6 +4,7 @@ ARG AIRFLOW_VERSION=3.0.3
 ARG ALPINE_VERSION=3.21
 
 FROM corporate-python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS builder
+USER root
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
 ARG AIRFLOW_UID=50000
@@ -32,12 +33,13 @@ RUN pip install --upgrade --user pip \
 USER airflow
 
 FROM corporate-python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
+USER root
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
 ARG AIRFLOW_UID=50000
 ARG AIRFLOW_GID=50000
-ENV AIRFLOW_HOME=/opt/airflow \
-    PATH=${AIRFLOW_HOME}/.local/bin:/usr/local/bin:$PATH
+ENV AIRFLOW_HOME=/opt/airflow
+ENV PATH=${AIRFLOW_HOME}/.local/bin:/usr/local/bin:$PATH
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
