@@ -13,16 +13,16 @@ docker build -t airflow-alpine -f docker/Dockerfile .
 ```
 The Dockerfile relies on the `corporate-python:3.12-alpine3.21` base image and installs only Python packages. No system package manager is used during the build.
 
-All Python packages are installed using a dedicated `airflow` user so no system
-directories are modified during the build. You can extend the image by copying
-additional Python dependencies into `/opt/airflow/.local`.
+All Python packages are installed using a dedicated `airflow` user within a
+virtual environment located at `/opt/airflow/.local`. You can extend the image
+by copying additional Python dependencies into that environment.
 
 ## Customising
 You can extend the image by creating your own Dockerfile that starts with `FROM airflow-alpine` and installs additional Python dependencies.
 
 ```Dockerfile
 FROM airflow-alpine
-RUN pip install --user your-package
+RUN pip install your-package
 ```
 
 Since the corporate base restricts the package manager, avoid installing OS packages and rely on Python wheels instead.

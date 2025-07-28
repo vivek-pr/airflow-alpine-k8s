@@ -21,16 +21,15 @@ RUN addgroup -S -g ${AIRFLOW_GID} airflow \
     && chown -R airflow:airflow ${AIRFLOW_HOME}
 
 USER airflow
+RUN python -m venv ${AIRFLOW_HOME}/.local
 # hadolint ignore=DL3013
-RUN pip install --upgrade --user pip \
-    && pip install --user "apache-airflow==${AIRFLOW_VERSION}" \
+RUN pip install --upgrade pip \
+    && pip install "apache-airflow==${AIRFLOW_VERSION}" \
          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
-    && pip install --user --no-cache-dir \
+    && pip install --no-cache-dir \
          "Werkzeug==3.0.6" \
          "cryptography==44.0.1" \
          "starlette==0.47.2"
-
-USER airflow
 
 FROM corporate-python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
 USER root
