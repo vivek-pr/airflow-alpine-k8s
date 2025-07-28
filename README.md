@@ -66,6 +66,7 @@ Test scripts in the `tests/` directory cover linting, vulnerability scanning and
 ./tests/test_trivy.sh
 ./tests/test_packages.sh
 ./tests/test_docker_build.sh
+./tests/test_user_permissions.sh
 ```
 
 The security-related tests expect `hadolint`, `trivy`, `cosign` and `kube-score` to be installed.

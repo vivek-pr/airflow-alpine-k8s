@@ -30,6 +30,13 @@ Consider applying Kubernetes NetworkPolicies to restrict pod-to-pod communicatio
 ## RBAC
 The example manifests use minimal RBAC permissions. Review the roles and tighten them to follow the principle of least privilege.
 
+## Non-Root Containers
+The Docker images define a dedicated `airflow` user (UID/GID `50000`) with a home
+directory at `/opt/airflow`. Running Airflow as a non-root user improves
+container security and works well with Kubernetes security contexts. The
+`tests/test_user_permissions.sh` script verifies that the image uses the correct
+UID/GID and file permissions.
+
 ## Updates
 Monitor Airflow and dependency release notes for security patches. Rebuild and redeploy the image when vulnerabilities are fixed.
 
