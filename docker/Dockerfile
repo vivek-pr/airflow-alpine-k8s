@@ -6,39 +6,56 @@ ARG ALPINE_VERSION=3.21
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS builder
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
+ARG AIRFLOW_UID=50000
+ARG AIRFLOW_GID=50000
 
-ENV PIP_NO_CACHE_DIR=1
+ENV AIRFLOW_HOME=/opt/airflow \
+    PIP_NO_CACHE_DIR=1 \
+    PATH=${AIRFLOW_HOME}/.local/bin:$PATH
 
 # Install build dependencies
 # hadolint ignore=DL3018,DL3013
 RUN apk add --no-cache --virtual .build-deps \
         gcc g++ musl-dev libc-dev libffi-dev openssl-dev cargo make postgresql-dev \
         py3-pybind11-dev re2-dev \
-    && pip install --upgrade pip \
-    && pip install "apache-airflow==${AIRFLOW_VERSION}" \
+    && addgroup -S -g ${AIRFLOW_GID} airflow \
+    && adduser -S -u ${AIRFLOW_UID} -G airflow -h ${AIRFLOW_HOME} airflow \
+    && mkdir -p ${AIRFLOW_HOME} \
+    && chown -R airflow:airflow ${AIRFLOW_HOME}
+
+USER airflow
+RUN pip install --upgrade --user pip \
+    && pip install --user "apache-airflow==${AIRFLOW_VERSION}" \
          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
-    && pip install --no-cache-dir --upgrade \
+    && pip install --user --no-cache-dir --upgrade \
          "Werkzeug>=3.0.6" \
          "cryptography>=44.0.1" \
-         "starlette>=0.47.2" \
-    && apk del .build-deps
+         "starlette>=0.47.2"
+
+USER root
+RUN apk del .build-deps
 
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
+ARG AIRFLOW_UID=50000
+ARG AIRFLOW_GID=50000
 ENV AIRFLOW_HOME=/opt/airflow \
-    PATH=/usr/local/bin:$PATH
+    PATH=${AIRFLOW_HOME}/.local/bin:/usr/local/bin:$PATH
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash postgresql-client redis su-exec re2 \
-    && addgroup -S airflow && adduser -S -G airflow airflow \
-    && mkdir -p ${AIRFLOW_HOME} \
-    && chown airflow:airflow ${AIRFLOW_HOME}
+    && addgroup -S -g ${AIRFLOW_GID} airflow \
+    && adduser -S -u ${AIRFLOW_UID} -G airflow -h ${AIRFLOW_HOME} airflow \
+    && mkdir -p ${AIRFLOW_HOME}/dags ${AIRFLOW_HOME}/logs ${AIRFLOW_HOME}/plugins \
+    && chown -R airflow:airflow ${AIRFLOW_HOME}
 
 COPY --from=builder /usr/local /usr/local
+COPY --from=builder ${AIRFLOW_HOME}/.local ${AIRFLOW_HOME}/.local
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chown -R airflow:airflow ${AIRFLOW_HOME} \
+    && chmod +x /entrypoint.sh
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
