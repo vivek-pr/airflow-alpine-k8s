@@ -24,9 +24,11 @@ USER airflow
 RUN python -m venv ${AIRFLOW_HOME}/.local
 # hadolint ignore=DL3013
 RUN pip install --upgrade pip \
-    && pip install "apache-airflow==${AIRFLOW_VERSION}" \
+    && pip install --only-binary=:all: \
+         "dill==0.3.9" \
+         "apache-airflow==${AIRFLOW_VERSION}" \
          --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
-    && pip install --no-cache-dir \
+    && pip install --no-cache-dir --only-binary=:all: \
          "Werkzeug==3.0.6" \
          "cryptography==44.0.1" \
          "starlette==0.47.2"

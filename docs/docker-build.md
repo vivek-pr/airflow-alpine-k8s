@@ -17,6 +17,10 @@ All Python packages are installed using a dedicated `airflow` user within a
 virtual environment located at `/opt/airflow/.local`. You can extend the image
 by copying additional Python dependencies into that environment.
 
+Because the official Airflow constraints pin `dill` to a version without
+prebuilt wheels for Python 3.12, the Dockerfile explicitly installs
+`dill==0.3.9` to ensure a wheel is used and no compiler is required.
+
 ## Customising
 You can extend the image by creating your own Dockerfile that starts with `FROM airflow-alpine` and installs additional Python dependencies.
 
