@@ -3,7 +3,7 @@ ARG PYTHON_VERSION=3.12
 ARG AIRFLOW_VERSION=3.0.3
 ARG ALPINE_VERSION=3.21
 
-FROM corporate-python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS builder
+FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION} AS builder
 USER root
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
@@ -33,7 +33,7 @@ RUN pip install --upgrade pip \
          "cryptography==44.0.1" \
          "starlette==0.47.2"
 
-FROM corporate-python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
+FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
 USER root
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION

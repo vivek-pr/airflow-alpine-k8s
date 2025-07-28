@@ -1,6 +1,6 @@
 # Docker Image Build Guide
 
-This document explains how the Airflow image is built using the corporate base and how you can customise it for your environment.
+This document explains how the Airflow image is built from the official Python Alpine base and how you can customise it for your environment.
 
 ## Requirements
 - Docker 20.10+
@@ -11,7 +11,7 @@ Run the following command from the repository root:
 ```bash
 docker build -t airflow-alpine -f docker/Dockerfile .
 ```
-The Dockerfile relies on the `corporate-python:3.12-alpine3.21` base image and installs only Python packages. No system package manager is used during the build.
+The Dockerfile relies on the `python:3.12-alpine3.21` base image and installs only Python packages. No system package manager is used during the build.
 
 All Python packages are installed using a dedicated `airflow` user within a
 virtual environment located at `/opt/airflow/.local`. You can extend the image
@@ -29,4 +29,4 @@ FROM airflow-alpine
 RUN pip install your-package
 ```
 
-Since the corporate base restricts the package manager, avoid installing OS packages and rely on Python wheels instead.
+Avoid installing additional OS packages and rely on Python wheels to keep the image lightweight.
