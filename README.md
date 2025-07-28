@@ -35,7 +35,7 @@ A lightweight Apache Airflow distribution built on Alpine Linux and tailored for
 
 ## Docker Image
 The Docker image is built from `python:3.12-alpine3.21` and installs only Python packages. It runs as a non-root `airflow` user (UID/GID 50000) with packages stored in `/opt/airflow/.local`. See [docs/docker-build.md](docs/docker-build.md) for details on customizing the build.
-To avoid needing a compiler, the build pins `dill` to a wheel-supported version.
+To avoid needing a compiler, the build patches the Airflow constraints so that `dill==0.3.9` is installed from a wheel.
 
 ## Helm Chart
 The chart in `helm/` wraps the official Airflow chart and replaces the image with the Alpine variant. Configuration options are documented in [docs/helm-customization.md](docs/helm-customization.md).

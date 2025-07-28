@@ -18,8 +18,8 @@ virtual environment located at `/opt/airflow/.local`. You can extend the image
 by copying additional Python dependencies into that environment.
 
 Because the official Airflow constraints pin `dill` to a version without
-prebuilt wheels for Python 3.12, the Dockerfile explicitly installs
-`dill==0.3.9` to ensure a wheel is used and no compiler is required.
+prebuilt wheels for Python 3.12, the Dockerfile patches the constraints file so
+`dill==0.3.9` is installed from a wheel and no compiler is required.
 
 ## Customising
 You can extend the image by creating your own Dockerfile that starts with `FROM airflow-alpine` and installs additional Python dependencies.
