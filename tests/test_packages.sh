@@ -1,10 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-required_packages=(bash postgresql-client redis su-exec re2)
-for pkg in "${required_packages[@]}"; do
-    if ! grep -q "$pkg" docker/Dockerfile; then
-        echo "Package $pkg missing in Dockerfile" >&2
-        exit 1
-    fi
-done
+if ! grep -q "^FROM corporate-python" docker/Dockerfile; then
+    echo "Dockerfile must use the corporate base image" >&2
+    exit 1
+fi
+
+if grep -q "apk add" docker/Dockerfile; then
+    echo "apk usage detected but package manager is restricted" >&2
+    exit 1
+fi
