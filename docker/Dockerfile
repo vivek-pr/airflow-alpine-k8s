@@ -26,15 +26,18 @@ RUN apk add --no-cache --virtual .build-deps \
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
 ARG AIRFLOW_VERSION
 ARG PYTHON_VERSION
+ARG AIRFLOW_UID=50000
+ARG AIRFLOW_GID=50000
 ENV AIRFLOW_HOME=/opt/airflow \
     PATH=/usr/local/bin:$PATH
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash postgresql-client redis su-exec re2 \
-    && addgroup -S airflow && adduser -S -G airflow airflow \
-    && mkdir -p ${AIRFLOW_HOME} \
-    && chown airflow:airflow ${AIRFLOW_HOME}
+    && addgroup -S -g ${AIRFLOW_GID} airflow \
+    && adduser -S -u ${AIRFLOW_UID} -G airflow -h ${AIRFLOW_HOME} airflow \
+    && mkdir -p ${AIRFLOW_HOME}/dags ${AIRFLOW_HOME}/logs ${AIRFLOW_HOME}/plugins \
+    && chown -R airflow:airflow ${AIRFLOW_HOME}
 
 COPY --from=builder /usr/local /usr/local
 COPY docker/entrypoint.sh /entrypoint.sh
