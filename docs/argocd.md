@@ -33,6 +33,23 @@ kubectl apply -k k8s/argocd/overlays/dev
 ```
 ArgoCD will create an `Application` resource that syncs the Helm chart.
 
+## Database Migrations
+The chart configures a job that runs Airflow database migrations as an
+ArgoCD sync hook. When deploying with ArgoCD the following values are
+set in `helm/values-alpine.yaml` to ensure migrations run automatically:
+
+```yaml
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+  jobAnnotations:
+    "argocd.argoproj.io/hook": Sync
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+```
+This job must complete before the Airflow pods start successfully.
+
 ## Testing Sync and Rollback
 Push a change to the tracked Git branch and watch ArgoCD sync it automatically. To rollback, revert the commit – the cluster state will follow.
 

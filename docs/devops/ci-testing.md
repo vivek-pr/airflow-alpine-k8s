@@ -8,9 +8,10 @@ This document describes the continuous integration workflow that verifies the He
 2. The Airflow image is built from `docker/Dockerfile` and loaded into the cluster.
 3. ArgoCD is installed in the cluster.
 4. An `Application` resource is applied pointing at the current commit.
-5. ArgoCD syncs the chart and the script waits for all pods to become ready.
-6. Basic health checks run inside the scheduler pod.
-7. The cluster is deleted when the job finishes.
+5. A migration job runs as an ArgoCD sync hook to upgrade the Airflow database.
+6. ArgoCD syncs the chart and the script waits for all pods to become ready.
+7. Basic health checks run inside the scheduler pod.
+8. The cluster is deleted when the job finishes.
 
 ## Running Locally
 

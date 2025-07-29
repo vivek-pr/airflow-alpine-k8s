@@ -49,3 +49,13 @@ webserverReadinessProbe:
   enabled: true
   initialDelaySeconds: 10
   timeoutSeconds: 20
+
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+  jobAnnotations:
+    "argocd.argoproj.io/hook": Sync
