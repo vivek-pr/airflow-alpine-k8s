@@ -1,3 +1,6 @@
+
+airflowVersion: "3.0.3"
+
 images:
   useDefaultImageForMigration: false
   airflow:
