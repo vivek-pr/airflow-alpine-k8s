@@ -56,6 +56,10 @@ An Ingress resource exposes the Airflow webserver at `airflow.local`. The
 an Ingress controller is installed in your cluster or port-forward the service
 for local testing.
 
+The ArgoCD `Application` object also includes a link to this URL under the
+**Airflow UI** section so you can access the web interface directly from the
+ArgoCD dashboard.
+
 ## Testing Sync and Rollback
 Push a change to the tracked Git branch and watch ArgoCD sync it automatically. To rollback, revert the commit – the cluster state will follow.
 

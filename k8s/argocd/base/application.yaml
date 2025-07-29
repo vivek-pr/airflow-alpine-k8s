@@ -12,6 +12,9 @@ spec:
     helm:
       valueFiles:
         - values-alpine.yaml
+  info:
+    - name: Airflow UI
+      value: http://airflow.local
   destination:
     server: https://kubernetes.default.svc
     namespace: airflow
