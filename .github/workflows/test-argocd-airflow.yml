@@ -32,6 +32,11 @@ jobs:
           chmod +x argocd
           sudo mv argocd /usr/local/bin/
 
+      - name: Build and load Airflow image
+        run: |
+          docker build -t airflow-alpine-k8s:latest -f docker/Dockerfile .
+          kind load docker-image airflow-alpine-k8s:latest --name airflow-ci
+
       - name: Install ArgoCD
         run: |
           kubectl create namespace argocd

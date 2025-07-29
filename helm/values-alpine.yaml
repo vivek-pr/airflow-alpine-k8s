@@ -1,9 +1,11 @@
 images:
-  useDefaultImageForMigration: true
+  useDefaultImageForMigration: false
   airflow:
-    repository: apache/airflow
-    tag: "3.0.3"
+    repository: airflow-alpine-k8s
+    tag: latest
     pullPolicy: IfNotPresent
+    pullSecrets:
+      - regcred
 
 webserver:
   resources:
