@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/my-org/airflow-alpine-k8s.git
-    targetRevision: main
+    repoURL: https://github.com/vivek-pr/airflow-alpine-k8s.git
+    targetRevision: codex/set-up-ci-pipeline-for-airflow-helm-chart
     path: helm
     helm:
       valueFiles:
