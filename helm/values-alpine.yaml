@@ -59,3 +59,12 @@ migrateDatabaseJob:
   applyCustomEnv: false
   jobAnnotations:
     "argocd.argoproj.io/hook": Sync
+
+ingress:
+  web:
+    enabled: true
+    hosts:
+      - name: airflow.local
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/ingress.class: nginx

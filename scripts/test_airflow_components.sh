@@ -34,3 +34,8 @@ kubectl exec -n "$NAMESPACE" "$SCHED" -- airflow dags list | head
 
 WEB=$(kubectl get pods -n "$NAMESPACE" -l component=webserver -o jsonpath='{.items[0].metadata.name}')
 kubectl exec -n "$NAMESPACE" "$WEB" -- curl -f http://localhost:8080/health
+
+# If an Ingress was created, wait for it and test connectivity
+if kubectl get ingress -n "$NAMESPACE" >/dev/null 2>&1; then
+    kubectl wait --namespace "$NAMESPACE" --for=condition=Ready ingress --timeout=${MAX_WAIT}s
+fi

@@ -50,6 +50,12 @@ createUserJob:
 ```
 This job must complete before the Airflow pods start successfully.
 
+## Web Ingress
+An Ingress resource exposes the Airflow webserver at `airflow.local`. The
+`helm/values-alpine.yaml` file enables this using the NGINX Ingress class. Ensure
+an Ingress controller is installed in your cluster or port-forward the service
+for local testing.
+
 ## Testing Sync and Rollback
 Push a change to the tracked Git branch and watch ArgoCD sync it automatically. To rollback, revert the commit – the cluster state will follow.
 

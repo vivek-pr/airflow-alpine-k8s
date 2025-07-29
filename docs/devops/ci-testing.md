@@ -35,4 +35,5 @@ This deploys the dev configuration and sets the namespace suffix automatically.
 - **ArgoCD sync failure** – run `argocd app logs airflow` and check the controller logs.
 - **Port conflicts** – KinD may fail if local ports are in use. Delete existing clusters with `kind delete cluster`.
 - **Resource limits** – ensure the runner has at least 4 GB of memory available.
+- **Ingress access** – if no controller is installed, port-forward the webserver service to reach the UI.
 
