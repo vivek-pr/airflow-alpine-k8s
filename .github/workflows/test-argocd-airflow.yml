@@ -38,7 +38,7 @@ jobs:
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
           kubectl rollout status deployment/argocd-server -n argocd --timeout=600s
           kubectl rollout status deployment/argocd-repo-server -n argocd --timeout=600s
-          kubectl rollout status deployment/argocd-application-controller -n argocd --timeout=600s
+          kubectl rollout status statefulset/argocd-application-controller -n argocd --timeout=600s
 
       - name: Deploy Airflow via ArgoCD
         run: |
