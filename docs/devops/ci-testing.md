@@ -21,6 +21,12 @@ You need `kind`, `kubectl`, `helm` and `argocd` installed. Execute the workflow 
 
 Logs show the progress of ArgoCD and the status of each component.
 
+To test a specific environment locally you can apply one of the Kustomize overlays:
+```bash
+kubectl apply -k k8s/argocd/overlays/dev
+```
+This deploys the dev configuration and sets the namespace suffix automatically.
+
 ## Troubleshooting
 
 - **Pods not ready** – inspect pod events with `kubectl describe pod <name>`.
