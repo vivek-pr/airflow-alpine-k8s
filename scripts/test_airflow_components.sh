@@ -13,6 +13,10 @@ done
 
 components=(webserver scheduler triggerer worker redis postgres)
 for comp in "${components[@]}"; do
+    echo "Waiting for $comp pod to be created"
+    until kubectl get pods -n "$NAMESPACE" -l component="$comp" -o name 2>/dev/null | grep -q .; do
+        sleep 5
+    done
     kubectl wait --namespace "$NAMESPACE" --for=condition=Ready pod -l component="$comp" --timeout=600s
 done
 
