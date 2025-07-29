@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
 spec:
   source:
-    targetRevision: dev
+    # Use the main branch by default. Change this if you maintain a
+    # separate development branch.
+    targetRevision: main
   destination:
     namespace: airflow-dev

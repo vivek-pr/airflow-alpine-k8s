@@ -8,7 +8,10 @@ This guide explains how to deploy the Helm chart using [ArgoCD](https://argo-cd.
 - `k8s/argocd/overlays/staging` – staging environment settings
 - `k8s/argocd/overlays/prod` – production environment settings
 
-Each overlay points to a different Git branch and Kubernetes namespace.
+Each overlay deploys to a separate Kubernetes namespace. By default the
+manifests track the `main` branch of this repository, but you can change the
+`targetRevision` field in each overlay if you maintain dedicated environment
+branches.
 
 ## Installing ArgoCD
 1. Create the namespace and install the manifests:
