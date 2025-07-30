@@ -1,7 +1,7 @@
 apiVersion: v2
 name: airflow-alpine
 version: 0.1.0
-appVersion: "3.0.2"
+appVersion: "latest"
 dependencies:
   - name: airflow
     version: 1.18.0

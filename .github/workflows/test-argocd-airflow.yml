@@ -1,0 +1,57 @@
+name: Test ArgoCD Airflow Deployment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up KinD cluster
+        uses: container-tools/kind-action@v1
+        with:
+          version: v0.20.0
+          cluster_name: airflow-ci
+          wait: 120s
+
+      - name: Install kubectl, helm and argocd
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+          curl -sSL -o kubectl https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          curl -sSL https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz | tar -xz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/download/v2.8.4/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/
+
+      - name: Build and load Airflow image
+        run: |
+          docker build -t airflow-alpine-k8s:latest -f docker/Dockerfile .
+          kind load docker-image airflow-alpine-k8s:latest --name airflow-ci
+
+      - name: Install ArgoCD
+        run: |
+          kubectl create namespace argocd
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+          kubectl rollout status deployment/argocd-server -n argocd --timeout=600s
+          kubectl rollout status deployment/argocd-repo-server -n argocd --timeout=600s
+          kubectl rollout status statefulset/argocd-application-controller -n argocd --timeout=600s
+
+      - name: Deploy Airflow via ArgoCD
+        run: |
+          sed "s#https://github.com/my-org/airflow-alpine-k8s.git#https://github.com/${GITHUB_REPOSITORY}.git#; s#targetRevision: main#targetRevision: ${GITHUB_SHA}#" k8s/argocd/base/application.yaml > /tmp/application.yaml
+          kubectl apply -n argocd -f k8s/argocd/base/notifications-cm.yaml
+          kubectl apply -n argocd -f /tmp/application.yaml
+          sleep 10
+
+      - name: Wait for Airflow components
+        run: |
+          ./scripts/test_airflow_components.sh

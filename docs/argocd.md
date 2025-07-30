@@ -8,7 +8,10 @@ This guide explains how to deploy the Helm chart using [ArgoCD](https://argo-cd.
 - `k8s/argocd/overlays/staging` – staging environment settings
 - `k8s/argocd/overlays/prod` – production environment settings
 
-Each overlay points to a different Git branch and Kubernetes namespace.
+Each overlay deploys to a separate Kubernetes namespace. By default the
+manifests track the `main` branch of this repository, but you can change the
+`targetRevision` field in each overlay if you maintain dedicated environment
+branches.
 
 ## Installing ArgoCD
 1. Create the namespace and install the manifests:
@@ -29,6 +32,33 @@ Apply the overlay that matches your environment:
 kubectl apply -k k8s/argocd/overlays/dev
 ```
 ArgoCD will create an `Application` resource that syncs the Helm chart.
+
+## Database Migrations
+The chart configures a job that runs Airflow database migrations as an
+ArgoCD sync hook. When deploying with ArgoCD the following values are
+set in `helm/values-alpine.yaml` to ensure migrations run automatically:
+
+```yaml
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+  jobAnnotations:
+    "argocd.argoproj.io/hook": Sync
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+```
+This job must complete before the Airflow pods start successfully.
+
+## Web Ingress
+An Ingress resource exposes the Airflow webserver at `airflow.local`. The
+`helm/values-alpine.yaml` file enables this using the NGINX Ingress class. Ensure
+an Ingress controller is installed in your cluster or port-forward the service
+for local testing.
+
+The ArgoCD `Application` object also includes a link to this URL under the
+**Airflow UI** section so you can access the web interface directly from the
+ArgoCD dashboard.
 
 ## Testing Sync and Rollback
 Push a change to the tracked Git branch and watch ArgoCD sync it automatically. To rollback, revert the commit – the cluster state will follow.

@@ -1,3 +1,6 @@
+
+airflowVersion: "3.0.3"
+
 images:
   useDefaultImageForMigration: false
   airflow:
@@ -49,3 +52,22 @@ webserverReadinessProbe:
   enabled: true
   initialDelaySeconds: 10
   timeoutSeconds: 20
+
+createUserJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+
+migrateDatabaseJob:
+  useHelmHooks: false
+  applyCustomEnv: false
+  jobAnnotations:
+    "argocd.argoproj.io/hook": Sync
+
+ingress:
+  web:
+    enabled: true
+    hosts:
+      - name: airflow.local
+    ingressClassName: nginx
+    annotations:
+      kubernetes.io/ingress.class: nginx

@@ -1,9 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: airflow-dev
+  name: airflow
+  namespace: argocd
 spec:
   source:
-    targetRevision: dev
+    # Use the main branch by default. Change this if you maintain a
+    # separate development branch.
+    targetRevision: codex/set-up-ci-pipeline-for-airflow-helm-chart
   destination:
     namespace: airflow-dev
