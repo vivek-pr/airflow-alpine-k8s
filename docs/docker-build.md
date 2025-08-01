@@ -13,6 +13,10 @@ docker build -t airflow-alpine -f docker/Dockerfile .
 ```
 The Dockerfile installs the minimal set of Alpine packages required for Airflow. The resulting image is around 200MB.
 
+All Python packages are installed using a dedicated `airflow` user so no system
+directories are modified during the build. You can extend the image by copying
+additional Python dependencies into `/opt/airflow/.local`.
+
 ## Customising
 You can extend the image by creating your own Dockerfile that starts with `FROM airflow-alpine` and installs additional system packages or Python dependencies.
 

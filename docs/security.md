@@ -37,6 +37,9 @@ container security and works well with Kubernetes security contexts. The
 `tests/test_user_permissions.sh` script verifies that the image uses the correct
 UID/GID and file permissions.
 
+All Python packages are installed under `/opt/airflow/.local` by this user to
+avoid modifying system directories.
+
 ## Updates
 Monitor Airflow and dependency release notes for security patches. Rebuild and redeploy the image when vulnerabilities are fixed.
 
