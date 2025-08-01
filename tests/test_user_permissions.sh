@@ -28,3 +28,11 @@ if [ "$perms" != "50000:50000" ]; then
     echo "Incorrect permissions on /opt/airflow" >&2
     exit 1
 fi
+
+
+pkgperms=$(docker run --rm "$IMAGE" sh -c "stat -c '%u:%g' /opt/airflow/.local")
+if [ "$pkgperms" != "50000:50000" ]; then
+    echo "Incorrect permissions on /opt/airflow/.local" >&2
+    exit 1
+fi
+

@@ -34,7 +34,7 @@ A lightweight Apache Airflow distribution built on Alpine Linux and tailored for
 3. Optionally deploy via ArgoCD (see [docs/argocd.md](docs/argocd.md)).
 
 ## Docker Image
-The Docker image is based on Alpine and contains just the packages required to run Airflow. See [docs/docker-build.md](docs/docker-build.md) for details on customizing the build and for a list of installed packages.
+The Docker image is based on Alpine and contains just the packages required to run Airflow. It runs as a non-root `airflow` user (UID/GID 50000) and installs Python packages under `/opt/airflow/.local`. See [docs/docker-build.md](docs/docker-build.md) for details on customizing the build and for a list of installed packages.
 
 ## Helm Chart
 The chart in `helm/` wraps the official Airflow chart and replaces the image with the Alpine variant. Configuration options are documented in [docs/helm-customization.md](docs/helm-customization.md).
