@@ -73,6 +73,26 @@ The security-related tests expect `hadolint`, `trivy`, `cosign` and `kube-score`
 
 Additional suites for end-to-end and performance testing are also available.
 
+## Upgrade: Werkzeug 3.1.3 and Flask/FAB
+
+- Goal: Move the image to Werkzeug 3.1.3 with a deterministic, pinned dependency set compatible with Flask 3 and Flask-AppBuilder.
+- Implementation:
+  - Custom constraints are generated via `pip-tools` from `constraints.in` against the official Airflow constraints for the detected Airflow/Python versions.
+  - The file `constraints.custom.txt` is checked in and copied into the image. The Docker build uses `PIP_CONSTRAINT` for deterministic installs.
+  - The Dockerfile retains non-root user, slim Alpine base, and adds a healthcheck for the webserver.
+- Validation:
+  - Unit tests in `tests/unit/test_auth.py` verify CSRF, session cookie flags, and safe login redirects.
+  - Integration in `tests/integration/test_container.py` builds/starts webserver, scheduler, triggerer; verifies `/health`, logs in programmatically, and runs a trivial DAG.
+
+### Rollback Notes
+
+If a specific provider or plugin cannot be upgraded:
+- Pin that provider in `constraints.in` to the last known compatible version and re-run `make deps`.
+- If still incompatible, remove that provider from `constraints.in` and document the limitation here with exact conflict pairs and versions.
+- As a temporary workaround, you can set `Werkzeug==2.2.3` and recompile constraints to confirm the regression point.
+
+Known limitations: None identified so far for the default set of providers included (`amazon`, `google`, `cncf-kubernetes`, `postgres`) on Airflow 3.0.x and Python 3.12.
+
 ## Documentation
 - [Docker Build Guide](docs/docker-build.md)
 - [Helm Customization](docs/helm-customization.md)

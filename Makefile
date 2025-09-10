@@ -1,0 +1,57 @@
+SHELL := /bin/bash
+
+# Parse versions from docker/Dockerfile
+AIRFLOW_VERSION ?= $(shell rg -n "^ARG AIRFLOW_VERSION=" docker/Dockerfile | sed -E 's/.*=([A-Za-z0-9\._-]+)/\1/' | head -n1)
+PYTHON_VERSION  ?= $(shell rg -n "^ARG PYTHON_VERSION=" docker/Dockerfile | sed -E 's/.*=([0-9]+\.[0-9]+)/\1/' | head -n1)
+
+IMAGE ?= airflow-custom:$(AIRFLOW_VERSION)-py$(PYTHON_VERSION)
+
+.PHONY: deps build test run clean
+
+## deps: Compile constraints.custom.txt using pip-tools with our overrides
+deps:
+	@echo "Generating constraints for Airflow $(AIRFLOW_VERSION) on Python $(PYTHON_VERSION)"
+	python3 -m venv .venv-tools && \
+	. .venv-tools/bin/activate && \
+	pip install -q --upgrade pip pip-tools && \
+	URL=https://raw.githubusercontent.com/apache/airflow/constraints-$(AIRFLOW_VERSION)/constraints-$(PYTHON_VERSION).txt && \
+	curl -fsSL $$URL -o constraints.airflow.base.raw.txt && \
+	rg -v -i '^(Werkzeug|Flask|Flask-AppBuilder|itsdangerous|Jinja2|click|blinker|Flask-Login|Flask-WTF|Flask-Babel)\b' constraints.airflow.base.raw.txt > constraints.airflow.base.txt && \
+	AIRFLOW_VERSION=$(AIRFLOW_VERSION) PYTHON_VERSION=$(PYTHON_VERSION) envsubst < constraints.in > .constraints.rendered.in && \
+	pip-compile --resolver=backtracking --upgrade -o constraints.custom.txt -c constraints.airflow.base.txt .constraints.rendered.in && \
+	rm -f .constraints.rendered.in && \
+	deactivate
+	@echo "constraints.custom.txt generated."
+
+## deps-fast: Fallback generator (no pip-tools), merges upstream constraints with overrides
+deps-fast:
+	AIRFLOW_VERSION=$(AIRFLOW_VERSION) PYTHON_VERSION=$(PYTHON_VERSION) python scripts/merge_constraints.py
+
+## build: Build Docker image using constraints.custom.txt
+build:
+	docker build --build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+	             --build-arg AIRFLOW_VERSION=$(AIRFLOW_VERSION) \
+	             -t $(IMAGE) -f docker/Dockerfile .
+
+## run: Start Airflow webserver quickly for local smoke
+run:
+	docker run --rm -it -p 8080:8080 \
+	  -e AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db \
+	  -e AIRFLOW__CORE__EXECUTOR=SequentialExecutor \
+	  -e AIRFLOW__WEBSERVER__AUTHENTICATE=True \
+	  -e AIRFLOW__WEBSERVER__SECRET_KEY=devsecret \
+	  -e AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX=True \
+	  $(IMAGE)
+
+## test: Run unit + integration tests with pytest
+test:
+	python3 -m venv .venv && \
+	. .venv/bin/activate && \
+	pip install -q --upgrade pip && \
+	pip install -q -r tests/requirements-dev.txt && \
+	pytest -q && \
+	deactivate
+
+clean:
+	rm -rf .venv .venv-tools
+	rm -f .constraints.rendered.in
