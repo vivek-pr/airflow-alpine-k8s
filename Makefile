@@ -1,8 +1,11 @@
 SHELL := /bin/bash
 
-# Parse versions from docker/Dockerfile
-AIRFLOW_VERSION ?= $(shell rg -n "^ARG AIRFLOW_VERSION=" docker/Dockerfile | sed -E 's/.*=([A-Za-z0-9\._-]+)/\1/' | head -n1)
-PYTHON_VERSION  ?= $(shell rg -n "^ARG PYTHON_VERSION=" docker/Dockerfile | sed -E 's/.*=([0-9]+\.[0-9]+)/\1/' | head -n1)
+# Parse versions from docker/Dockerfile (no ripgrep dependency)
+RAW_AIRFLOW_VERSION := $(shell grep -E "^ARG AIRFLOW_VERSION=" docker/Dockerfile | head -n1 | sed -E 's/.*=([A-Za-z0-9\._-]+)/\1/')
+RAW_PYTHON_VERSION  := $(shell grep -E "^ARG PYTHON_VERSION=" docker/Dockerfile | head -n1 | sed -E 's/.*=([0-9]+\.[0-9]+)/\1/')
+
+AIRFLOW_VERSION ?= $(if $(RAW_AIRFLOW_VERSION),$(RAW_AIRFLOW_VERSION),3.0.3)
+PYTHON_VERSION  ?= $(if $(RAW_PYTHON_VERSION),$(RAW_PYTHON_VERSION),3.12)
 
 IMAGE ?= airflow-custom:$(AIRFLOW_VERSION)-py$(PYTHON_VERSION)
 
@@ -16,7 +19,7 @@ deps:
 	pip install -q --upgrade pip pip-tools && \
 	URL=https://raw.githubusercontent.com/apache/airflow/constraints-$(AIRFLOW_VERSION)/constraints-$(PYTHON_VERSION).txt && \
 	curl -fsSL $$URL -o constraints.airflow.base.raw.txt && \
-	rg -v -i '^(Werkzeug|Flask|Flask-AppBuilder|itsdangerous|Jinja2|click|blinker|Flask-Login|Flask-WTF|Flask-Babel)\b' constraints.airflow.base.raw.txt > constraints.airflow.base.txt && \
+	grep -Evi "^(Werkzeug|Flask|Flask-AppBuilder|itsdangerous|Jinja2|click|blinker|Flask-Login|Flask-WTF|Flask-Babel)(==|\s|$)" constraints.airflow.base.raw.txt > constraints.airflow.base.txt && \
 	AIRFLOW_VERSION=$(AIRFLOW_VERSION) PYTHON_VERSION=$(PYTHON_VERSION) envsubst < constraints.in > .constraints.rendered.in && \
 	pip-compile --resolver=backtracking --upgrade -o constraints.custom.txt -c constraints.airflow.base.txt .constraints.rendered.in && \
 	rm -f .constraints.rendered.in && \

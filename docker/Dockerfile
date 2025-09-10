@@ -49,13 +49,15 @@ COPY constraints.custom.txt /opt/airflow/constraints.custom.txt
 COPY scripts/wait-for-airflow.sh /usr/local/bin/wait-for-airflow
 RUN chmod +x /usr/local/bin/wait-for-airflow
 COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY docker/healthcheck.sh /usr/local/bin/airflow-healthcheck
+RUN chmod +x /entrypoint.sh /usr/local/bin/airflow-healthcheck
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
-# Health checks for webserver readiness
-HEALTHCHECK --interval=30s --timeout=10s --retries=5 CMD wget -qO- http://127.0.0.1:8080/health | grep -q '"status": "healthy"' || exit 1
+# Health check that works for both API server and Webserver
+# Tries /api/v1/health then /health then /api/v1/version on port 8080
+HEALTHCHECK --interval=30s --timeout=10s --retries=5 CMD /usr/local/bin/airflow-healthcheck || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["airflow", "webserver"]
+CMD ["airflow", "api-server"]
