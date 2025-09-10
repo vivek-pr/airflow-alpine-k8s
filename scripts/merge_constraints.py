@@ -10,7 +10,7 @@ OVERRIDES = {
     "Flask": "3.0.3",
     "Flask-AppBuilder": "5.0.0",
     "itsdangerous": "2.2.0",
-    "Jinja2": "3.1.4",
+    "Jinja2": "3.1.5",
     "click": "8.1.7",
     "blinker": "1.8.2",
     "Flask-Login": "0.6.3",
@@ -64,4 +64,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

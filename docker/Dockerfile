@@ -58,4 +58,4 @@ WORKDIR ${AIRFLOW_HOME}
 HEALTHCHECK --interval=30s --timeout=10s --retries=5 CMD wget -qO- http://127.0.0.1:8080/health | grep -q '"status": "healthy"' || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["airflow", "webserver"]
+CMD ["airflow", "api-server"]
