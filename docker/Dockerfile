@@ -9,18 +9,21 @@ ARG PYTHON_VERSION
 
 ENV PIP_NO_CACHE_DIR=1
 
-# Install build dependencies
+# Install build dependencies and Airflow into a wheelhouse using custom constraints
 # hadolint ignore=DL3018,DL3013
 RUN apk add --no-cache --virtual .build-deps \
         gcc g++ musl-dev libc-dev libffi-dev openssl-dev cargo make postgresql-dev \
-        py3-pybind11-dev re2-dev \
-    && pip install --upgrade pip \
-    && pip install "apache-airflow==${AIRFLOW_VERSION}" \
-         --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt" \
-    && pip install --no-cache-dir --upgrade \
-         "Werkzeug>=3.0.6" \
-         "cryptography>=44.0.1" \
-         "starlette>=0.47.2" \
+        py3-pybind11-dev re2-dev curl \
+    && python -m pip install --upgrade pip wheel setuptools \
+    && mkdir -p /wheelhouse
+
+# Copy our deterministic constraints inside the build context
+COPY constraints.custom.txt /opt/airflow/constraints.custom.txt
+ENV PIP_CONSTRAINT=/opt/airflow/constraints.custom.txt
+
+# Install Apache Airflow with extras using custom constraints
+RUN pip install --no-cache-dir \
+        "apache-airflow[celery,postgres,redis,ssh,kubernetes]==${AIRFLOW_VERSION}" \
     && apk del .build-deps
 
 FROM python:${PYTHON_VERSION}-alpine${ALPINE_VERSION}
@@ -33,21 +36,26 @@ ENV AIRFLOW_HOME=/opt/airflow \
 
 # Runtime dependencies and user setup
 # hadolint ignore=DL3018
-RUN apk add --no-cache bash postgresql-client redis su-exec re2 \
+RUN apk add --no-cache bash postgresql-client redis su-exec re2 wget \
     && addgroup -S -g ${AIRFLOW_GID} airflow \
     && adduser -S -u ${AIRFLOW_UID} -G airflow -h ${AIRFLOW_HOME} airflow \
     && mkdir -p ${AIRFLOW_HOME}/dags ${AIRFLOW_HOME}/logs ${AIRFLOW_HOME}/plugins \
     && chown -R airflow:airflow ${AIRFLOW_HOME}
 
 COPY --from=builder /usr/local /usr/local
+# Include constraints for reference/debugging in the runtime image
+COPY constraints.custom.txt /opt/airflow/constraints.custom.txt
+# Include helper scripts
+COPY scripts/wait-for-airflow.sh /usr/local/bin/wait-for-airflow
+RUN chmod +x /usr/local/bin/wait-for-airflow
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 USER airflow
 WORKDIR ${AIRFLOW_HOME}
 
-# Health check to ensure Airflow command responds
-HEALTHCHECK CMD airflow info > /dev/null || exit 1
+# Health checks for webserver readiness
+HEALTHCHECK --interval=30s --timeout=10s --retries=5 CMD wget -qO- http://127.0.0.1:8080/health | grep -q '"status": "healthy"' || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["airflow", "webserver"]

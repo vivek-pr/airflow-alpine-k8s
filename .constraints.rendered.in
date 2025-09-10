@@ -1,0 +1,24 @@
+# This is a templated input for pip-compile.
+# It is rendered by the Makefile with AIRFLOW_VERSION and PYTHON_VERSION from docker/Dockerfile.
+
+# Pin Airflow with common extras used by this image
+apache-airflow[celery,postgres,redis,ssh,kubernetes]==3.0.3
+
+# Override: target Werkzeug and ecosystem compatible with Flask 3
+Werkzeug==3.1.3
+Flask>=3.0
+flask-appbuilder>=5.0.0
+itsdangerous>=2.1
+Jinja2>=3.1
+click>=8.1
+blinker>=1.6
+Flask-Login>=0.6.3
+Flask-WTF>=1.2
+Flask-Babel>=4.0.0
+gunicorn>=21.2
+
+# Keep some common providers modern (resolver may pick latest allowed)
+apache-airflow-providers-amazon
+apache-airflow-providers-google
+apache-airflow-providers-cncf-kubernetes
+apache-airflow-providers-postgres
